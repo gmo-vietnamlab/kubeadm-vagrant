@@ -11,7 +11,8 @@ Installation
 
 ```git clone https://github.com/coolsvap/kubeadm-vagrant ```
 
-- Choose your distribution of choice from CentOS/Ubuntu and move to the specific directory.
+- Choose your distribution of choice from CentOS/Ubuntu and move to the specific directory. 
+- (Forked Warning) Must use CentOS due to I have only fixed the internal pods communication bug in CentOS 
 - Configure the cluster parameters in Vagrantfile. Refer below for details of configuration options.
 
 ``` vi Vagrantfile ```

@@ -11,7 +11,7 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
         https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
 
-yum install -y net-tools screen tree telnet kubelet kubeadm docker --nogpgcheck
+yum install -y net-tools screen tree telnet kubelet-1.11.3 kubeadm-1.11.3 docker vim --nogpgcheck
 systemctl enable kubelet && systemctl start kubelet
 systemctl enable docker && systemctl start docker
 

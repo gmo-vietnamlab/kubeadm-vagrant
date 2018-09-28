@@ -1,11 +1,12 @@
-BOX_IMAGE = "coolsvap/centos-k8s"
+BOX_IMAGE = "bento/centos-7.4"
+BOX_VERSION = "201803.24.0"
 SETUP_MASTER = true
-SETUP_NODES = false
+SETUP_NODES = true
 NODE_COUNT = 2
 MASTER_IP = "192.168.26.10"
 NODE_IP_NW = "192.168.26."
 POD_NW_CIDR = "10.244.0.0/16"
-K8S_DASHBOARD = true
+K8S_DASHBOARD = false
 
 #Generate new using steps in README
 KUBETOKEN = "b029ee.968a33e8d8e6bb0d"
@@ -27,8 +28,8 @@ mkdir -p $HOME/.kube
 sudo cp -Rf /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
+# kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl apply -f /home/vagrant/app/network-config/kube-flannel.yml
 
 SCRIPT
 
@@ -42,15 +43,16 @@ DASHSCRIPT
 
 Vagrant.configure("2") do |config|
   config.vm.box = BOX_IMAGE
+  config.vm.box_version = BOX_VERSION
   config.vm.box_check_update = false
 
   config.vm.provider "virtualbox" do |l|
     l.cpus = 1
-    l.memory = "1024"
+    l.memory = "512"
   end
 
-  config.hostmanager.enabled = true
-  config.hostmanager.manage_guest = true
+  # config.hostmanager.enabled = true
+  # config.hostmanager.manage_guest = true
   # config.vm.network "public_network"
 
   if SETUP_MASTER
@@ -61,7 +63,12 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpus", "2"]
         vb.customize ["modifyvm", :id, "--memory", "2048"]
       end
+
+      subconfig.vm.synced_folder './app', '/home/vagrant/app', owner: "vagrant", group: "vagrant", create: true, mount_options: ["dmode=775,fmode=777"]
+
+      subconfig.vm.provision :shell, path: "./install-centos.sh"
       subconfig.vm.provision :shell, inline: $kubemasterscript
+
       if K8S_DASHBOARD
         subconfig.vm.provision :shell, inline: $kubedashscript
         subconfig.vm.network "forwarded_port", guest: 8443, host: 8443
@@ -74,7 +81,10 @@ Vagrant.configure("2") do |config|
       config.vm.define "node#{i}" do |subconfig|
         subconfig.vm.hostname = "node#{i}"
         subconfig.vm.network :private_network, ip: NODE_IP_NW + "#{i + 10}"
+
+        subconfig.vm.provision :shell, path: "./install-centos.sh"
         subconfig.vm.provision :shell, inline: $kubeminionscript
+
       end
     end
   end
