@@ -1,3 +1,23 @@
+# Steps
+```bash
+# Clone the project
+git clone https://github.com/hieuvecto/kubeadm-vagrant.git
+
+# Change directory into CentOS
+cd kubeadm-vagrant/CentOS
+
+# Up the vagrant boxes
+vagrant up
+
+# After vagrant boxes upped:
+# Ssh into master box
+vagrant ssh master
+
+# Check cluster:
+sudo kubectl get nodes
+
+# For more options, read the original README below.
+```
 # kubeadm-vagrant
 Setup Kubernetes Cluster with Kubeadm and Vagrant
 
@@ -13,7 +33,7 @@ Installation
 
 - Choose your distribution of choice from CentOS/Ubuntu and move to the specific directory. 
 - (Forked Warning) Must use CentOS due to I have only fixed the internal pods communication bug in CentOS 
-- Configure the cluster parameters in Vagrantfile. Refer below for details of configuration options.
+- Configure the cluster parameters in Vagrantfile. Refer below fo   r details of configuration options.
 
 ``` vi Vagrantfile ```
 
